@@ -1,14 +1,29 @@
-import React from 'react';
-import ReactDOM from 'react-dom';
-import './index.css';
-import App from './App';
+import React from "react";
+import ReactDOM from "react-dom";
+import { BrowserRouter as Router } from "react-router-dom";
+import { ThemeProvider } from '@material-ui/core/styles';
+import url from 'url';
+
 import * as serviceWorker from './serviceWorker';
+import pkg from '../package.json';
+import App from "./App";
+import Auth0ProviderWithHistory from "./auth0-provider-with-history";
+import theme from './theme';
+
+
+const siteURL = pkg.homepage;
+const basename = siteURL ? url.parse(siteURL).pathname : '';
 
 ReactDOM.render(
-  <React.StrictMode>
-    <App />
-  </React.StrictMode>,
-  document.getElementById('root')
+  <ThemeProvider theme={theme}>
+    <Router>
+      <Auth0ProviderWithHistory>
+        <App />
+      </Auth0ProviderWithHistory>
+    </Router>
+  </ThemeProvider>
+,
+  document.getElementById("root")
 );
 
 // If you want your app to work offline and load faster, you can change

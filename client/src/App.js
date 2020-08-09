@@ -1,18 +1,44 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
-import Scroller from './components/Scroller';
-import Nav from './components/nav';
-import { Container } from '@material-ui/core';
-import AddPhotoButton from './components/Fab';
+import React, { useEffect, useState } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import { Typography, Grid, CssBaseline } from '@material-ui/core';
+import { makeStyles } from '@material-ui/core/styles';
+import { NavBar } from './components/NavBar';
+import Landing from './views/landing';
+
+const useStyles = makeStyles(theme => ({
+  root: {
+  },
+  main:{
+  },
+  headerBorder:{
+    border: 'solid 1px white'
+  },
+}));
+
+
 
 function App() {
+  const [loading, setLoading] = useState(true);
+  const classes = useStyles();
+
+  useEffect(() => {
+    setLoading(false);
+  },[])
+
   return (
-    <div className="App">
-      <Container>
-        <Scroller />
-        <AddPhotoButton />
-      </Container>
+    <div className={classes.root}>
+      <CssBaseline />
+      <NavBar />
+        <Grid container>
+        <Switch>
+          <Route exact path='/'>
+            <Landing />
+          </Route>
+          <Route path='*'>
+            <Typography variant='h3'>404</Typography>
+          </Route>
+        </Switch>
+        </Grid>
     </div>
   );
 }
