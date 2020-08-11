@@ -16,7 +16,7 @@ const setup = async ({uri, name}) => {
       db = client.db(name);
 
       await userRepository({db: db});
-      await plantRepository({db: db});
+      await plantRepository.setup({db: db});
     }
   );
 }

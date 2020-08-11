@@ -1,7 +1,8 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { BrowserRouter as Router } from "react-router-dom";
+import { Router } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
+import history from './history';
 import url from 'url';
 
 import * as serviceWorker from './serviceWorker';
@@ -16,7 +17,7 @@ const basename = siteURL ? url.parse(siteURL).pathname : '';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <Router>
+    <Router basename={basename} history={history}>
       <Auth0ProviderWithHistory>
         <App />
       </Auth0ProviderWithHistory>

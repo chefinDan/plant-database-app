@@ -4,10 +4,18 @@ import {
   Toolbar, 
   Typography, 
   Box,
-  IconButton
+  IconButton,
+  Grid,
+  Container,
+  useScrollTrigger,
+  Slide
 } from '@material-ui/core';
 import { Menu } from '@material-ui/icons';
 import { makeStyles, styled } from '@material-ui/core/styles';
+import { useAuth0 } from "@auth0/auth0-react";
+import LogoutButton from "./logout-button";
+import LoginButton from "./login-button";
+import SignupButton from "./signup-button";
 import logoUrl from '../static/monstera.png';
 import { Link } from 'react-router-dom';
 import theme from '../theme';
@@ -46,34 +54,81 @@ const useStyles = makeStyles(theme => (
     },
     appBarTitle:{
       color: theme.palette.text.primary,
-      flexGrow: 1
     },
+    flexgrow:{
+      flexGrow: 1
+    }
   }
 ));
 
-const LogoImg = styled('img')({
-  height: '30px',
-})
+function HideOnScroll(props) {
+  const { children, window } = props;
+  // Note that you normally won't need to set the window ref as useScrollTrigger
+  // will default to window.
+  // This is only being set here because the demo is in an iframe.
+  const trigger = useScrollTrigger();
+
+  return (
+    <Slide appear={false} direction="down" in={!trigger}>
+      {children}
+    </Slide>
+  );
+}
+
+const AppBarLink = styled(Link)({
+  color: theme.palette.text.primary,
+  textDecoration: 'none'
+});
 
 
 export const NavBar = () => {
   const classes = useStyles();
+  const { isAuthenticated } = useAuth0(); 
+
   return (
     <Box component='nav'>
+    <HideOnScroll>
       <AppBar position='fixed' className={classes.appBar}>
-        <Toolbar>
-          <IconButton edge='start' className={classes.menuButton}>
-            <Menu />
-          </IconButton>
-          <Typography variant='h6' className={classes.appBarTitle}>
-            Portfolio
-          </Typography>
-          <IconButton>
-            <LogoImg src={logoUrl} />
-          </IconButton>
+        <Toolbar >
+          <Grid container justify='space-between' alignItems='center'>
+            <Grid item xs={8}>
+              <Grid container alignItems='center' spacing={3}>
+                <Grid item>
+                  <IconButton edge='start' className={classes.menuButton}>
+                    <Menu />
+                  </IconButton>
+                </Grid>
+                <Grid item>
+                  <AppBarLink to='/profile'>
+                    <Typography variant='h6' >
+                      Profile
+                    </Typography>
+                  </AppBarLink>
+                </Grid>
+                <Grid item>
+                  <AppBarLink to='/collection' className={classes.flexgrow}>
+                    <Typography variant='h6' >
+                      Collection
+                    </Typography>
+                  </AppBarLink>
+                </Grid> 
+              </Grid>
+            </Grid>
+            <Grid item xs={4} >
+              <Grid container justify='flex-end'>
+                <Grid item>
+                  {isAuthenticated ? <LogoutButton /> : <> <LoginButton /> <SignupButton /> </>}
+                </Grid>
+              </Grid>
+            </Grid>
+          </Grid>
         </Toolbar>
       </AppBar>
+      </HideOnScroll>
       <div className={classes.offset} />
     </Box>
   )
 }
+
+
+export default NavBar;

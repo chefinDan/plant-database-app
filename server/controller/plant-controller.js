@@ -1,21 +1,38 @@
 const {Router} = require('express');
+const {
+    insertOne: insertPlant,
+    insertMany: insertPlants
+ } = require('../repository/plant-respository');
 
 const PlantController = {
-    get router(){
-        const router = Router();
+  get router(){
+    const router = Router();
 
-        router.get('/', this.index);
-        router.post('/', this.create);
+    router.get('/', this.index);
+    router.post('/', this.create);
 
-        return router;
-    },
+    return router;
+  },
 
-    index(req, res, next){
-        res.status(200).send('list all plants');
-    },
-    create(req, res, next){
-        res.status(201).send('plant created');
+  index(req, res, next){
+    res.status(200).send('list all plants');
+  },
+
+  async create(req, res, next){
+    const insert = { data: req.data, user: req.user};
+    try{
+      if(Array.isArray(insert.data)){
+        var result = await insertPlants(insert);
+      }
+      else{
+        var result = await insertPlant(insert);
+      }
+      res.status(201).send(result);
     }
+    catch(e){
+      console.log(e);
+    }
+  }
 }
 
 module.exports = PlantController;

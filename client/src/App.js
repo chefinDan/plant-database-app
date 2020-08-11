@@ -3,7 +3,11 @@ import { Route, Switch } from 'react-router-dom';
 import { Typography, Grid, CssBaseline } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavBar } from './components/NavBar';
-import Landing from './views/landing';
+import Testing from './views/testing';
+import Profile from './views/profile';
+import PrivateRoute from './components/private-route';
+import { Collections } from '@material-ui/icons';
+import Collection from './views/collection';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -31,9 +35,9 @@ function App() {
       <NavBar />
         <Grid container>
         <Switch>
-          <Route exact path='/'>
-            <Landing />
-          </Route>
+          <Route exact path='/' component={Testing} />
+          <PrivateRoute path='/profile' component={Profile} />
+          <PrivateRoute path='/collection' component={Collection} />
           <Route path='*'>
             <Typography variant='h3'>404</Typography>
           </Route>
