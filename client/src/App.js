@@ -8,6 +8,9 @@ import Profile from './views/profile';
 import PrivateRoute from './components/private-route';
 import { Collections } from '@material-ui/icons';
 import Collection from './views/collection';
+import data from './data';
+
+const {nav: { drawer: drawerData }} = data
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -18,8 +21,6 @@ const useStyles = makeStyles(theme => ({
     border: 'solid 1px white'
   },
 }));
-
-
 
 function App() {
   const [loading, setLoading] = useState(true);
@@ -32,7 +33,7 @@ function App() {
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <NavBar />
+      <NavBar {...drawerData}/>
         <Grid container>
         <Switch>
           <Route exact path='/' component={Testing} />

@@ -8,10 +8,16 @@ import {
   Grid,
   Container,
   useScrollTrigger,
-  Slide
+  Slide,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from '@material-ui/core';
-import { Menu } from '@material-ui/icons';
 import { makeStyles, styled } from '@material-ui/core/styles';
+import { Menu } from '@material-ui/icons';
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "./logout-button";
 import LoginButton from "./login-button";
@@ -19,6 +25,10 @@ import SignupButton from "./signup-button";
 import logoUrl from '../static/monstera.png';
 import { Link } from 'react-router-dom';
 import theme from '../theme';
+import ProfileBadge from './ProfileBadge';
+import DrawerHeader from './DrawerHeader';
+
+const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => (
   {
@@ -57,15 +67,21 @@ const useStyles = makeStyles(theme => (
     },
     flexgrow:{
       flexGrow: 1
+    },
+    list:{
+      width:'auto'
+    },
+    drawer:{
+      width: drawerWidth
+    },
+    badgeWrapper:{
+      // marginLeft: '10px',
+      marginRight: '20px'
     }
   }
 ));
 
-function HideOnScroll(props) {
-  const { children, window } = props;
-  // Note that you normally won't need to set the window ref as useScrollTrigger
-  // will default to window.
-  // This is only being set here because the demo is in an iframe.
+function HideOnScroll({children}) {
   const trigger = useScrollTrigger();
 
   return (
@@ -75,15 +91,46 @@ function HideOnScroll(props) {
   );
 }
 
-const AppBarLink = styled(Link)({
-  color: theme.palette.text.primary,
-  textDecoration: 'none'
-});
 
-
-export const NavBar = () => {
+export const NavBar = ({items, icons, colors}) => {
   const classes = useStyles();
-  const { isAuthenticated } = useAuth0(); 
+  const [drawer, setDrawer] = useState(false);
+  const { isAuthenticated, user } = useAuth0(); 
+  
+  const toggleDrawer = (open) => (event) => {
+    if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
+      return;
+    }
+    setDrawer(s => !s);
+  };
+
+
+  const DrawerContent = () => (
+    <>
+      <DrawerHeader>
+        <div className={classes.badgeWrapper}>
+          <ProfileBadge />
+        </div>
+      </DrawerHeader>
+      <Divider /> 
+      <List>
+        {items.map((text, i) => (
+          <React.Fragment key={i}>
+            {text === 'Settings' ? <Divider /> : null}
+            <ListItem button key={i} style={{paddingRight:'60px'}}>
+              <ListItemIcon >
+                {(() => {
+                  let Icon = icons[text]
+                  return <Icon style={{ color: colors[text] }}/>
+                })()}
+              </ListItemIcon>
+              <ListItemText primary={text} primaryTypographyProps={{variant: 'body2'}}/>
+            </ListItem>
+            </React.Fragment>
+        ))}
+      </List>
+    </>
+  );
 
   return (
     <Box component='nav'>
@@ -91,30 +138,16 @@ export const NavBar = () => {
       <AppBar position='fixed' className={classes.appBar}>
         <Toolbar >
           <Grid container justify='space-between' alignItems='center'>
-            <Grid item xs={8}>
-              <Grid container alignItems='center' spacing={3}>
-                <Grid item>
-                  <IconButton edge='start' className={classes.menuButton}>
+            {
+              isAuthenticated ? 
+                <Grid item xs>
+                  <IconButton edge='start' className={classes.menuButton} onClick={toggleDrawer(true)}>
                     <Menu />
                   </IconButton>
                 </Grid>
-                <Grid item>
-                  <AppBarLink to='/profile'>
-                    <Typography variant='h6' >
-                      Profile
-                    </Typography>
-                  </AppBarLink>
-                </Grid>
-                <Grid item>
-                  <AppBarLink to='/collection' className={classes.flexgrow}>
-                    <Typography variant='h6' >
-                      Collection
-                    </Typography>
-                  </AppBarLink>
-                </Grid> 
-              </Grid>
-            </Grid>
-            <Grid item xs={4} >
+              : null
+            }
+            <Grid item>
               <Grid container justify='flex-end'>
                 <Grid item>
                   {isAuthenticated ? <LogoutButton /> : <> <LoginButton /> <SignupButton /> </>}
@@ -126,6 +159,15 @@ export const NavBar = () => {
       </AppBar>
       </HideOnScroll>
       <div className={classes.offset} />
+      { 
+        isAuthenticated ? 
+          <Drawer anchor='left' open={drawer} onClose={toggleDrawer(false)} className={classes.drawer}>
+            <Typography variant='h6'>
+              <DrawerContent />
+            </Typography>
+          </Drawer>
+        : null
+      }
     </Box>
   )
 }
