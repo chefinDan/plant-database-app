@@ -2,11 +2,9 @@ import React, { useState } from 'react';
 import { 
   AppBar, 
   Toolbar, 
-  Typography, 
   Box,
   IconButton,
   Grid,
-  Container,
   useScrollTrigger,
   Slide,
   Drawer,
@@ -27,8 +25,8 @@ import { Link } from 'react-router-dom';
 import theme from '../theme';
 import ProfileBadge from './ProfileBadge';
 import DrawerHeader from './DrawerHeader';
+import Loading from './loading';
 
-const drawerWidth = 240;
 
 const useStyles = makeStyles(theme => (
   {
@@ -71,15 +69,14 @@ const useStyles = makeStyles(theme => (
     list:{
       width:'auto'
     },
-    drawer:{
-      width: drawerWidth
-    },
     badgeWrapper:{
       // marginLeft: '10px',
       marginRight: '20px'
     }
   }
 ));
+
+
 
 function HideOnScroll({children}) {
   const trigger = useScrollTrigger();
@@ -91,11 +88,10 @@ function HideOnScroll({children}) {
   );
 }
 
-
 export const NavBar = ({items, icons, colors}) => {
   const classes = useStyles();
   const [drawer, setDrawer] = useState(false);
-  const { isAuthenticated, user } = useAuth0(); 
+  const { isAuthenticated, isLoading, user } = useAuth0(); 
   
   const toggleDrawer = (open) => (event) => {
     if (event.type === 'keydown' && (event.key === 'Tab' || event.key === 'Shift')) {
@@ -107,7 +103,7 @@ export const NavBar = ({items, icons, colors}) => {
 
   const DrawerContent = () => (
     <>
-      <DrawerHeader>
+      <DrawerHeader onClick={toggleDrawer}>
         <div className={classes.badgeWrapper}>
           <ProfileBadge />
         </div>
@@ -150,7 +146,10 @@ export const NavBar = ({items, icons, colors}) => {
             <Grid item>
               <Grid container justify='flex-end'>
                 <Grid item>
-                  {isAuthenticated ? <LogoutButton /> : <> <LoginButton /> <SignupButton /> </>}
+                  {
+                    isLoading ? <Loading /> 
+                    : isAuthenticated ? <LogoutButton /> 
+                      : <> <LoginButton /> <SignupButton /> </>}
                 </Grid>
               </Grid>
             </Grid>
@@ -161,10 +160,13 @@ export const NavBar = ({items, icons, colors}) => {
       <div className={classes.offset} />
       { 
         isAuthenticated ? 
-          <Drawer anchor='left' open={drawer} onClose={toggleDrawer(false)} className={classes.drawer}>
-            <Typography variant='h6'>
-              <DrawerContent />
-            </Typography>
+          <Drawer 
+            anchor='left' 
+            open={drawer} 
+            onClose={toggleDrawer(false)} 
+            className={classes.drawer}
+          >
+            <DrawerContent />
           </Drawer>
         : null
       }

@@ -23,12 +23,7 @@ const useStyles = makeStyles(theme => ({
 }));
 
 function App() {
-  const [loading, setLoading] = useState(true);
   const classes = useStyles();
-
-  useEffect(() => {
-    setLoading(false);
-  },[])
 
   return (
     <div className={classes.root}>

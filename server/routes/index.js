@@ -7,6 +7,11 @@ const path = require('path');
 const { Router, static, json } = require('express');
 const controller = require('../utils/createControllerRoutes');
 
+const stripUserData = (req, res, next) => {
+  req.user = req.user.sub
+  next();
+}
+
 const setup = async ({appOrigin, issuer, audience, basename}) =>{
   const router = Router();
   const apiRouter = Router();
@@ -18,6 +23,14 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
     .use(cors({ origin: appOrigin }))
     .use(json());
   
+  const checkAuthHeader = (req, res, next) => {
+    if(!req.get('Authorization')){
+      res.status(401).send({error: 'No authorization token was found'})
+    }
+    else{
+      next();
+    }
+  }
   const checkJwt = jwt({
     secret: jwksRsa.expressJwtSecret({
       cache: true,
@@ -31,21 +44,21 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
     algorithms: ["RS256"],
   });
 
-  const stripUserData = (req) => {
-    req.user = req.user.sub
-  }
+  apiRouter.all(
+    '*',
+    checkAuthHeader,
+    checkJwt, 
+    stripUserData, 
+    (req, res, next) => next()
+  );
 
   apiRouter.use(
     '/plants', 
-    checkJwt, 
-    stripUserData, 
     controller('plant-controller')
   );
 
   apiRouter.use(
     '/users', 
-    checkJwt, 
-    stripUserData, 
     controller('user-controller')
   );
   

@@ -1,14 +1,18 @@
 import React from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Highlight from "../components/highlight";
-import { Grid } from "@material-ui/core";
+import { Grid, Button } from "@material-ui/core";
 import Loading from "../components/loading";
 
 
 const Profile = () => {
 
-  const { user, isLoading } = useAuth0();
+  const { user, isLoading, getAccessTokenSilently } = useAuth0();
   
+  const logAccessToken = () => async (event) => {
+    console.log(await getAccessTokenSilently());
+  }
+
   if(isLoading){
     return (
       <Loading />
@@ -25,11 +29,13 @@ const Profile = () => {
         />
       </Grid>
       <Grid item md={6}>
-        <h2>{name}</h2>
-        <p className="lead text-muted">{email}</p>
+        <h2>Name: {name}</h2>
+        <p className="lead text-muted">email: {email}</p>
       </Grid>
       <Grid item>
-        <Highlight>{JSON.stringify(user, null, 2)}</Highlight>
+        <Button onClick={logAccessToken()}>
+          Access Token
+        </Button>
       </Grid>
     </Grid>
   );  
