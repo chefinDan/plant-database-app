@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useHistory } from "react-router-dom";
 import { Auth0Provider, useAuth0 } from "@auth0/auth0-react";
 
@@ -12,6 +12,8 @@ const Auth0ProviderWithHistory = ({ children }) => {
   const onRedirectCallback = (appState) => {
     history.push(appState?.returnTo || window.location.pathname);
   };
+
+  useEffect(() => console.log(window.location.origin),[]);
 
   return (
     <Auth0Provider

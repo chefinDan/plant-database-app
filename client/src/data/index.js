@@ -1,22 +1,22 @@
 import React from 'react';
-import { AccountCircle, Collections, Settings } from '@material-ui/icons';
+import { Collections, Settings, Home } from '@material-ui/icons';
 import { useTheme } from '@material-ui/core';
 
 export default {
     nav: {
         drawer: {
             items: [
-                // 'Profile',
+                'Home',
                 'Collection',
                 'Settings',
             ],
             icons:{
-                // 'Profile': AccountCircle,
+                'Home': Home,
                 'Collection': Collections,
                 'Settings': Settings
             },
             colors:{
-                // 'Profile': 'purple',
+                'Home': 'red',
                 'Collection': 'blue',
                 'Settings': 'grey'
             }

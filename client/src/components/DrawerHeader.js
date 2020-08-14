@@ -24,7 +24,7 @@ const DrawerHeader = (props) => {
     const { children } = props; 
     
     return(
-        <Link to='/profile' className={classes.link} onClick={props.onClick(false)}>
+        <Link to='profile' className={classes.link} onClick={() => props.onClick()}>
             <div className={classes.styles}>
                 {children}
                 {<Typography variant='body2'>{ user.name.split('@')[0] }</Typography>}

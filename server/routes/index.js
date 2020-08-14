@@ -23,6 +23,8 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
     .use(cors({ origin: appOrigin }))
     .use(json());
   
+  staticRouter.use(static(path.join(__dirname, '../../client/build')))
+
   const checkAuthHeader = (req, res, next) => {
     if(!req.get('Authorization')){
       res.status(401).send({error: 'No authorization token was found'})
@@ -48,7 +50,7 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
     '*',
     checkAuthHeader,
     checkJwt, 
-    stripUserData, 
+    stripUserData,
     (req, res, next) => next()
   );
 
@@ -62,7 +64,6 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
     controller('user-controller')
   );
   
-  staticRouter.use(static(path.join(__dirname, '../../client/build')))
   router.use('/api', apiRouter);
   router.use('/', staticRouter);
 

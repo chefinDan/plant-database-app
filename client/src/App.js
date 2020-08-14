@@ -1,16 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import { Route, Switch } from 'react-router-dom';
-import { Typography, Grid, CssBaseline } from '@material-ui/core';
+import { Route, Switch, useRouteMatch, useHistory, Redirect } from 'react-router-dom';
+import { Typography, Grid, CssBaseline, Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavBar } from './components/NavBar';
-import Testing from './views/testing';
+import Home from './views/home';
 import Profile from './views/profile';
 import PrivateRoute from './components/private-route';
-import { Collections } from '@material-ui/icons';
 import Collection from './views/collection';
-import data from './data';
-
-const {nav: { drawer: drawerData }} = data
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -24,21 +20,43 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
   const classes = useStyles();
+  const [title, setTitle] = useState('');
+  const [photos, setPhotos] = useState([]);
 
+  const setNavBarTitle = (path) => {
+    if(title !== path){
+      setTitle(path.replace('/', ''));
+    }
+  }
+
+  const saveCollectionState = (photos) => {
+    setPhotos(photos);
+  }
+  
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <NavBar {...drawerData}/>
-        <Grid container>
+      <NavBar title={title} /> 
         <Switch>
-          <Route exact path='/' component={Testing} />
-          <PrivateRoute path='/profile' component={Profile} />
-          <PrivateRoute path='/collection' component={Collection} />
-          <Route path='*'>
-            <Typography variant='h3'>404</Typography>
-          </Route>
+          <PrivateRoute 
+            path='/profile' exact 
+            component={Profile}
+          />
+          <PrivateRoute
+            path='/collection' exact
+            component={() => (<Collection onUnmount={saveCollectionState} state={photos}/>)}
+          />
+          <Route 
+            path='/'
+            component={Home}
+          />
+          <Route 
+            path='*'
+            component={() => (
+              <Typography variant='h3'>404</Typography>
+            )}
+          />
         </Switch>
-        </Grid>
     </div>
   );
 }

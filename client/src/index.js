@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
-import { Router } from "react-router-dom";
+import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
-import history from './history';
 import url from 'url';
 
 import * as serviceWorker from './serviceWorker';
@@ -11,17 +10,16 @@ import App from "./App";
 import Auth0ProviderWithHistory from "./auth0-provider-with-history";
 import theme from './theme';
 
-
 const siteURL = pkg.homepage;
 const basename = siteURL ? url.parse(siteURL).pathname : '';
 
 ReactDOM.render(
   <ThemeProvider theme={theme}>
-    <Router basename={basename} history={history}>
+    <BrowserRouter basename={basename}>
       <Auth0ProviderWithHistory>
         <App />
       </Auth0ProviderWithHistory>
-    </Router>
+    </BrowserRouter>
   </ThemeProvider>
 ,
   document.getElementById("root")

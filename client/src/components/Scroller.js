@@ -10,7 +10,6 @@ import {
 import InfoIcon from '@material-ui/icons/Info';
 import { makeStyles } from '@material-ui/core/styles';
 
-const testUrl = 'https://jsonplaceholder.typicode.com/photos';
 
 const useStyles = makeStyles({
   container: {},
@@ -26,30 +25,14 @@ const useStyles = makeStyles({
   },
 });
 
-const Scroller = () => {
-  const [photos, setPhotos] = useState([]);
+const Scroller = ({photos}) => {
   const [loading, setLoading] = useState(false);
-  const [page, setPage] = useState(0);
   
-  useEffect(() => {
-    getPhotos(page);
-  },[page]);
+
 
   const classes = useStyles({loading: loading});
 
-  const getPhotos = (page) => {
-    setLoading(true);
-
-    fetch(testUrl + `?_page=${page}&_limit=12`)
-      .then(async res => {
-        const data = await res.json();
-        console.log(data);
-        setPhotos(state => {
-            return [...state, ...data];
-        });
-        setLoading(false);
-      });
-  }
+  
 
   return(
     <Container>
@@ -68,12 +51,6 @@ const Scroller = () => {
           </GridListTile>
         ))}
       </GridList>
-      <Container 
-        className={classes.loading}
-      >
-        <span className={classes.loadingText}>Loading...</span>
-        <Button onClick={e => setPage(state => state+1)}>Load More</Button>
-      </Container>
     </Container>
   );
 }
