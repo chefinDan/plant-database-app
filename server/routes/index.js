@@ -67,7 +67,6 @@ const setup = async ({appOrigin, issuer, audience, basename}) =>{
   router.use('/api', apiRouter);
   router.use('/', staticRouter);
 
-
   return router;
 }
 

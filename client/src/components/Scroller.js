@@ -26,13 +26,7 @@ const useStyles = makeStyles({
 });
 
 const Scroller = ({photos}) => {
-  const [loading, setLoading] = useState(false);
-  
-
-
-  const classes = useStyles({loading: loading});
-
-  
+  const classes = useStyles();
 
   return(
     <Container>

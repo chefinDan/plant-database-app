@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { Route, Switch, useRouteMatch, useHistory, Redirect } from 'react-router-dom';
 import { Typography, Grid, CssBaseline, Drawer } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -7,6 +7,8 @@ import Home from './views/home';
 import Profile from './views/profile';
 import PrivateRoute from './components/private-route';
 import Collection from './views/collection';
+import SearchResults from './views/searchResults';
+import FloatingActionButton from './components/Fab';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -21,16 +23,12 @@ const useStyles = makeStyles(theme => ({
 function App() {
   const classes = useStyles();
   const [title, setTitle] = useState('');
-  const [photos, setPhotos] = useState([]);
+  const [collection, setCollection] = useState({photos: [], page: 0});
 
   const setNavBarTitle = (path) => {
     if(title !== path){
       setTitle(path.replace('/', ''));
     }
-  }
-
-  const saveCollectionState = (photos) => {
-    setPhotos(photos);
   }
   
   return (
@@ -44,7 +42,11 @@ function App() {
           />
           <PrivateRoute
             path='/collection' exact
-            component={() => (<Collection onUnmount={saveCollectionState} state={photos}/>)}
+            component={Collection}
+          />
+          <PrivateRoute
+            path='/search' exact
+            component={SearchResults}
           />
           <Route 
             path='/'
@@ -57,6 +59,7 @@ function App() {
             )}
           />
         </Switch>
+        <FloatingActionButton />
     </div>
   );
 }

@@ -8,11 +8,7 @@ const PrivateRoute = ({ component, path, ...args }) => (
     component={
       withAuthenticationRequired(component, 
       {
-        onRedirecting: () => {
-          return (
-            <Loading />
-          );
-        },
+        onRedirecting: () => <Loading />,
         returnTo: path
       })
     }

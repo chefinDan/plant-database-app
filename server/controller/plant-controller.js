@@ -5,23 +5,53 @@ const {
     getAll: getAllPlants  
  } = require('../repository/plant-respository');
 
+const {
+  search: searchPlants,
+} = require('../repository/trefle-repository');
+
+const { pluck } = require('../../utils/array');
+
+const proxy = (req, res, next) => {
+  res.header('Access-Control-Allow-Origin', '*');
+  next();
+}
+const filter = {
+  min: ['id','common_name'],
+  std: ['id','common_name','scientific_name','image_url'],
+}
+
 const PlantController = {
   get router(){
     const router = Router();
 
+    router.get('/search', proxy, this.search);
+    
+    router.get('/:id', this.find);
+    router.post('/:id', this.notAllowed);
+    router.put('/:id', this.update);
+    router.patch('/:id', this.replace);
+    router.delete('/:id');
+    
     router.get('/', this.index);
     router.post('/', this.create);
     router.put('/', this.notAllowed);
     router.patch('/', this.notAllowed);
     router.delete('/', this.notAllowed);
 
-    router.get('/:id', this.find);
-    router.post('/:id', this.notAllowed);
-    router.put('/:id', this.update);
-    router.patch('/:id', this.replace);
-    router.delete('/:id')
-
     return router;
+  },
+
+  async search(req, res, next){
+    const {data,links,meta} = await searchPlants(req.query.q)
+    const filtered = pluck(data, filter.std);
+    console.log(filtered);
+    res.status(200).json({
+      meta: {
+        ...meta,
+        filtered: true
+      },
+      data: filtered
+    })
   },
 
   async index(req, res, next){

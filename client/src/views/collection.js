@@ -7,9 +7,9 @@ import { useRouteMatch } from "react-router-dom";
 const testUrl = 'https://jsonplaceholder.typicode.com/photos';
 
 
-const Collection = ({onRouteChange, onUnmount, state=[]}) => {
+const Collection = () => {
   const { user, isLoading } = useAuth0(true);
-  const [photos, setPhotos] = useState(state);
+  const [photos, setPhotos] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);
   const { url, path } = useRouteMatch();
@@ -20,18 +20,13 @@ const Collection = ({onRouteChange, onUnmount, state=[]}) => {
 
   useEffect(() => {
     getPhotos(page);
-    return () => {
-      onUnmount(photos);
-    }
-  },[page]);
+  }, [page]);
   
   const getPhotos = async (page) => {
     setLoading(true);
     const res = await fetch(testUrl + `?_page=${page}&_limit=12`);
     const data = await res.json();
-    setPhotos(state => {
-        return [...state, ...data];
-    });
+    setPhotos(state => [...state, ...data]);
     setLoading(false);
   }
   
@@ -44,7 +39,7 @@ const Collection = ({onRouteChange, onUnmount, state=[]}) => {
   return (
     <>
       <Scroller photos={photos} />
-      <Button onClick={e => setPage(state => state+1)}>Load More</Button>
+      <Button onClick={e => setPage(page => page+1)}>Load More</Button>
     </>
     );
 };
