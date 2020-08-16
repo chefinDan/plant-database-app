@@ -1,4 +1,5 @@
 const {Router} = require('express');
+const IncomingForm = require('formidable').IncomingForm;
 const {
     insertOne: insertPlant,
     insertMany: insertPlants,
@@ -78,20 +79,29 @@ const PlantController = {
   },
 
   async create(req, res, next){
-    const insert = { data: req.body, user: req.user};
-    try{
-      if(Array.isArray(insert.data)){
-        var result = await insertPlants(insert);
-      }
-      else{
-        var result = await insertPlant(insert);
-      }
-      res.status(201).json(result);
-    }
-    catch(e){
-      console.log(e);
-      res.status(400).json(e);
-    }
+    var form = new IncomingForm();
+    form.on('file', (field, file) => {
+      console.log(field, file);
+    });
+    form.on('end', () => {
+      console.log('form end');
+      // res.json()
+    });
+    form.parse(req);
+    // const insert = { data: req.body, user: req.user};
+    // try{
+    //   if(Array.isArray(insert.data)){
+    //     var result = await insertPlants(insert);
+    //   }
+    //   else{
+    //     var result = await insertPlant(insert);
+    //   }
+    //   res.status(201).json(result);
+    // }
+    // catch(e){
+    //   console.log(e);
+    //   res.status(400).json(e);
+    // }
   },
 
   async replace(req, res, next){

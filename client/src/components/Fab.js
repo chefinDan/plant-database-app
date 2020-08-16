@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Fab, Grid, makeStyles, Container } from '@material-ui/core';
+import { Fab, Grid, makeStyles, Container, AppBar, Tabs, Tab, Box, Typography, useTheme } from '@material-ui/core';
 import AddIcon from '@material-ui/icons/Add';
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -11,20 +11,47 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import SearchIcon from '@material-ui/icons/Search';
 import { useAuth0 } from '@auth0/auth0-react';
 import { Link } from 'react-router-dom';
+import Form from './form';
+import SearchInput from './searchInput';
 
 const useStyles = makeStyles(theme =>({
     fab: {
         position: 'fixed',
         bottom: theme.spacing(5),
         right: theme.spacing(5)
+    },
+    tabBar:{
+      backgroundColor: '#fff',
+      marginBottom: '1rem'
     }
 }));
 
+function TabPanel(props) {
+  const { children, value, index, ...other } = props;
+
+  return (
+    <div
+      role="tabpanel"
+      hidden={value !== index}
+      id={`full-width-tabpanel-${index}`}
+      {...other}
+    >
+      {value === index && (
+        <Box>
+          {children}
+        </Box>
+      )}
+    </div>
+  );
+}
+
 export default function FloatingActionButton({onCLick}){
   const classes = useStyles();
+  const theme = useTheme();
   const {getAccessTokenSilently} = useAuth0();
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
+  const [tab, setTab] = useState(0);
 
   const [open, setOpen] = React.useState(false);
 
@@ -36,25 +63,38 @@ export default function FloatingActionButton({onCLick}){
     setOpen(false);
   };
 
+  const handleTabChange = (event, newValue) => {
+    setTab(newValue);
+  };
+
   return (
     <div>
      <Fab color="primary" aria-label="add" className={classes.fab} onClick={handleClickOpen}>
-        <AddIcon />
+        <AddIcon style={{ color: 'white' }} />
       </Fab>    
-      <Dialog open={open} onClose={handleClose} aria-labelledby="form-dialog-title">
+      <Dialog open={open} onClose={handleClose} fullWidth={true} maxWidth='sm'>
+        <AppBar position='static' className={classes.tabBar}>
+          <Tabs
+            variant="fullWidth"
+            indicatorColor="secondary"
+            textColor='secondary'
+            value={tab} 
+            onChange={handleTabChange}
+          >
+            <Tab label="Search" />
+            <Tab label="New" />
+          </Tabs>
+        </AppBar>
         <DialogContent>
-          <DialogContentText>
-            Find your plant in our massive database...
-          </DialogContentText>
-          <TextField
-            autoFocus
-            margin="dense"
-            id="name"
-            fullWidth
-            onChange={(event) => setQuery(event.target.value)}
-          />
+          <TabPanel value={tab} index={0} dir={theme.direction}>
+            <SearchInput placeHolder='monstera...' handleChange={setQuery}/>
+          </TabPanel>
+          <TabPanel value={tab} index={1} dir={theme.direction}>
+            <Form />
+          </TabPanel>  
         </DialogContent>
         <DialogActions>
+        <TabPanel value={tab} index={0} dir={theme.direction}>
           <Button onClick={handleClose} color="primary">
             Cancel
           </Button>
@@ -63,6 +103,7 @@ export default function FloatingActionButton({onCLick}){
               Search
             </Button>
           </Link>
+        </TabPanel>
         </DialogActions>
       </Dialog>
     </div>
