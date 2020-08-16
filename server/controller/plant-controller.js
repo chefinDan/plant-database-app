@@ -7,7 +7,8 @@ const {
  } = require('../repository/plant-respository');
 
 const {
-  search: searchPlants,
+  search: trefleSearchPlants,
+  get: trefleGetPlant
 } = require('../repository/trefle-repository');
 
 const { pluck } = require('../../utils/array');
@@ -43,15 +44,16 @@ const PlantController = {
   },
 
   async search(req, res, next){
-    const {data,links,meta} = await searchPlants(req.query.q)
-    const filtered = pluck(data, filter.std);
-    console.log(filtered);
+    if(req.query.q){
+      var {data, links, meta} = await trefleSearchPlants(req.query.q);
+      data = pluck(data, filter.std, {strict: false});
+    }
+    else if(req.query.id){
+      var {data, links, meta} = await trefleGetPlant(req.query.id);
+    }
     res.status(200).json({
-      meta: {
-        ...meta,
-        filtered: true
-      },
-      data: filtered
+      meta: meta,
+      data: data
     })
   },
 

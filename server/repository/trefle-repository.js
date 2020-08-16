@@ -19,6 +19,23 @@ const search = async (query) => {
 	}
 }
 
+const get = async (id) => {
+  try{
+    const {data} = await trefle.request({
+      url: `/plants/${id}?token=${process.env.TREFLE_TOKEN}`,
+      method: 'get',
+    });
+  console.log(data);
+  return data;
+}
+catch(error){
+  if(error.response.status === 404)
+  console.log('trefle ERROR:', error)
+  throw(error);
+}
+}
+
 module.exports = {
   search,
+  get
 };

@@ -18,11 +18,11 @@ const SearchIcon = (props) => {
 }
 
 const SearchInput = (props) => {
-const {placeHolder, handleChange} = props;
+const {handleChange} = props;
   return (
     <Input
       autoFocus
-      placeholder={placeHolder}
+      placeholder="monstera..."
       margin="dense"
       id="searchField"
       fullWidth

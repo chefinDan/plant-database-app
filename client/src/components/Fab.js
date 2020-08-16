@@ -48,7 +48,6 @@ function TabPanel(props) {
 export default function FloatingActionButton({onCLick}){
   const classes = useStyles();
   const theme = useTheme();
-  const {getAccessTokenSilently} = useAuth0();
   const [results, setResults] = useState([]);
   const [query, setQuery] = useState('');
   const [tab, setTab] = useState(0);
@@ -87,7 +86,7 @@ export default function FloatingActionButton({onCLick}){
         </AppBar>
         <DialogContent>
           <TabPanel value={tab} index={0} dir={theme.direction}>
-            <SearchInput placeHolder='monstera...' handleChange={setQuery}/>
+            <SearchInput handleChange={setQuery}/>
           </TabPanel>
           <TabPanel value={tab} index={1} dir={theme.direction}>
             <Form />
