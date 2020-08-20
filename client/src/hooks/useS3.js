@@ -3,59 +3,6 @@ import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
 const bucketName = 'green-house-dev';
 
-const S3Provider = (bucket) => {
-  const s3Shell = {bucket};
-  
-  const upload = (key, meta) => {
-    return new Promise((resolve, reject) => {
-      const params = {Bucket: bucket, Key: key, ...meta}
-      s3Shell.s3.putObject(params, (err, data) => {
-        if(err) reject(err);
-        else resolve(data);
-      });
-    });
-  }
-
-  s3Shell.upload = upload;
-
-  return new Promise((resolve, reject) => {
-      AWS.config.credentials.get(err => {
-        s3Shell.s3 = new AWS.S3();
-        resolve(s3Shell);
-      });
-  });
-} 
-
-
-const upload = (data, onUpload) => {
-  var params = {
-    Bucket: bucketName, 
-    Key: 'someUniqueKey1', Body: data};
-  try{
-    AWS.config.credentials.get(err => {
-      if(err){
-        console.log('Error in getting credentials', err);
-      }
-      else{
-        const s3 = new AWS.S3();
-        return new Promise((resolve, reject) => {
-          s3.putObject(params, (err, data) => {
-            if(err) reject(err);
-            else resolve(data);
-          });
-        });
-      }
-    })
-  }      
-  catch(e){
-    console.log('caught error: ');
-    console.log(e)
-  }
-}
-const initialState = {
-    idToken: '',
-}
-
 const useS3 = () => {
   const { isLoading, getIdTokenClaims } = useAuth0();
   const [state, setState] = useState(initialState);
@@ -111,8 +58,4 @@ const useS3 = () => {
   }
 }
 
-export {
-    upload,
-    S3Provider,
-    useS3
-}
+export default useS3;
