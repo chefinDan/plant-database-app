@@ -5,6 +5,7 @@ import queryString from 'query-string';
 import { useAuth0 } from '@auth0/auth0-react';
 import Loading from '../components/loading';
 import Tile from '../components/tile';
+import Details from '../components/detailedTile';
 
 const SearchResults = () => {
   const { url, path } = useRouteMatch();
@@ -22,8 +23,9 @@ const SearchResults = () => {
           Authorization: `Bearer ${accessToken}`
         }
       });
-      const data = await res.json();
-      setResults(data);
+      const result = await res.json();
+      console.log(result);
+      setResults(result.data.map(d => ({clicked: false, ...d})));
     }
     catch(e){
       console.log(e);
@@ -40,23 +42,42 @@ const SearchResults = () => {
     querySearch(query);
   },[]);
 
+  const handleTileClick = (id) => {
+    setResults(state => {
+      const idx = state.findIndex(el => el.id === id);
+      console.log(idx);
+      state[idx].clicked = !state[idx].clicked;
+      return [...state];
+    });
+    // alert('tile clicked')
+  } 
+
   
   return (
     <div>
-      <Typography variant="h2" color="initial">Search Results</Typography>
       <Container>
+        <Typography variant="h2" color="initial">Search Results</Typography>
         {
-          results !== undefined ?
-            results.data.length > 1 ?
-              <GridList cellHeight={180} cols={gtSmall ? 3 : 2}>
-                {results.data.map((d, i) => (
-                  <GridListTile key={i}>
+          results !== undefined ? (
+            results.length > 1 ? (
+              <GridList cellHeight={180} cols={4}>
+                {results.map((d, i) => (
+                  <GridListTile 
+                    key={i}
+                    cols={gtSmall ? (d.clicked ? 2 : 1) : (d.clicked ? 4 : 2)}
+                    rows={gtSmall ? (d.clicked ? 2 : 1) : (d.clicked ? 2 : 1)}  
+                    onClick={() => handleTileClick(d.id)}
+                  >
                     <Tile {...d} />
                   </GridListTile>
                 ))}
-              </GridList> 
-            : JSON.stringify(results.data) 
-          : <Loading />
+              </GridList>
+            ) : ( 
+              null // <Details data={results.data}/>
+            )
+          ) : (
+            <Loading />
+          )
         }
       </Container>
     </div>

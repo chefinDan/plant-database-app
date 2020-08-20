@@ -2,6 +2,7 @@ import React from "react";
 import ReactDOM from "react-dom";
 import { BrowserRouter } from "react-router-dom";
 import { ThemeProvider } from '@material-ui/core/styles';
+import AWS from "aws-sdk";
 import url from 'url';
 
 import * as serviceWorker from './serviceWorker';

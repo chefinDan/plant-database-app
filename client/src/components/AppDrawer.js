@@ -1,8 +1,8 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import DrawerHeader from './DrawerHeader';
 import { makeStyles, Divider, List, ListItem, ListItemIcon, ListItemText, Drawer } from '@material-ui/core';
 import ProfileBadge from './ProfileBadge';
-import { Link, useRouteMatch, NavLink } from 'react-router-dom';
+import { useRouteMatch, NavLink } from 'react-router-dom';
 
 const useStyles = makeStyles(theme => ({
   badgeWrapper:{
@@ -19,7 +19,6 @@ const useStyles = makeStyles(theme => ({
 
 const AppDrawer = ({open, onCloseHandler, items, icons, colors}) => {
   const classes = useStyles();
-  const {url, path} = useRouteMatch();
 
   return(
     <Drawer 

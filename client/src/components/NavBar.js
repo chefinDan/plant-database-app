@@ -9,7 +9,7 @@ import {
   Slide,
   Typography,
 } from '@material-ui/core';
-import { makeStyles, styled } from '@material-ui/core/styles';
+import { makeStyles } from '@material-ui/core/styles';
 import { Menu } from '@material-ui/icons';
 import { useAuth0 } from "@auth0/auth0-react";
 import LogoutButton from "./logout-button";
@@ -76,7 +76,7 @@ function HideOnScroll({children}) {
 export const NavBar = ({title=''}) => {
   const [drawer, setDrawer] = useState(false);
   const classes = useStyles();
-  const { isAuthenticated, isLoading, user } = useAuth0(); 
+  const { isAuthenticated, isLoading } = useAuth0(); 
 
   const toggleDrawer = () => {
     setDrawer(s => !s);

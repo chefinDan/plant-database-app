@@ -1,10 +1,11 @@
-import React, { useEffect, useState, useCallback } from 'react';
-import { Route, Switch, useRouteMatch, useHistory, Redirect } from 'react-router-dom';
-import { Typography, Grid, CssBaseline, Drawer } from '@material-ui/core';
+import React, { useState } from 'react';
+import { Route, Switch } from 'react-router-dom';
+import { Typography, CssBaseline } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import { NavBar } from './components/NavBar';
 import Home from './views/home';
 import Profile from './views/profile';
+import LoginRedirect from './views/loginRedirect'; 
 import PrivateRoute from './components/private-route';
 import Collection from './views/collection';
 import SearchResults from './views/searchResults';
@@ -23,19 +24,16 @@ const useStyles = makeStyles(theme => ({
 function App() {
   const classes = useStyles();
   const [title, setTitle] = useState('');
-  const [collection, setCollection] = useState({photos: [], page: 0});
-
-  const setNavBarTitle = (path) => {
-    if(title !== path){
-      setTitle(path.replace('/', ''));
-    }
-  }
   
   return (
     <div className={classes.root}>
       <CssBaseline />
       <NavBar title={title} /> 
         <Switch>
+          <PrivateRoute
+            path='/redirect' exact
+            component={LoginRedirect}
+          />
           <PrivateRoute 
             path='/profile' exact 
             component={Profile}
