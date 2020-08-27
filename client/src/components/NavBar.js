@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { 
   AppBar, 
   Toolbar, 
@@ -10,7 +10,7 @@ import {
   Typography,
 } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
-import { Menu, MoreVert } from '@material-ui/icons';
+import { Menu, MoreVert, Search } from '@material-ui/icons';
 import { useAuth0 } from "@auth0/auth0-react";
 import LoginButton from "./login-button";
 import SignupButton from "./signup-button";
@@ -18,6 +18,7 @@ import Loading from './loading';
 import AppDrawer from './AppDrawer';
 import data from '../data';
 import { useHistory } from 'react-router-dom';
+import SearchInput from './searchInput';
 
 const useStyles = makeStyles(theme => (
   {
@@ -53,76 +54,123 @@ const getCurrentBasePath = () => {
   return loc;
 }
 
-export const NavBar = () => {
+export default function NavBar(){
   const [drawer, setDrawer] = useState(false);
-  const [title, setTitle] = useState('');
+  const [searchBar, setSearchBar] = useState(false);
+  const [title, setTitle] = useState(getCurrentBasePath());
   const classes = useStyles();
   const { isAuthenticated, isLoading } = useAuth0();
   const history = useHistory()
+  const node = useRef();
+
+  const handleClickOutside = e => {
+    console.log("clicking anywhere");
+    if (node.current.contains(e.target)) {
+      // inside click
+      return;
+    }
+    // outside click
+    setSearchBar(false);
+  };
 
   useEffect(() => {
-    setTitle(getCurrentBasePath());    
     history.listen(() => {
       setTitle(getCurrentBasePath());
     });
   },[]);
 
+  useEffect(() => {
+    if(searchBar){
+      document.addEventListener('mousedown', handleClickOutside);
+    }
+    else{
+      document.removeEventListener('mousedown', handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [searchBar]);
+
   const toggleDrawer = () => {
     setDrawer(s => !s);
   };
 
+  const toggleSearchBar = () => {
+    setSearchBar(true);
+  }
+
   const {nav: { drawer: drawerData }} = data
 
   return (
-    <>
-    <Box component='nav'>
-    <HideOnScroll>
-      <AppBar position='fixed' className={classes.appBar}>
-        <Toolbar >
-          <Grid container justify='space-between' alignItems='center'>
-            <Grid item>
-              <Grid container alignItems='center'>
-                {
-                  isAuthenticated &&
-                  <Grid item>
-                    <IconButton edge='start' className={classes.menuButton} onClick={toggleDrawer}>
-                      <Menu />
-                    </IconButton>
-                  </Grid>
-                }
+    <div ref={node}>
+      <AppDrawer open={drawer} onCloseHandler={toggleDrawer} {...drawerData}/>
+      <Box component='nav'>
+        <HideOnScroll>
+          <AppBar position='fixed' className={classes.appBar}>
+            <Toolbar >
+              <Grid container justify='space-between' alignItems='center'>
+            
+              {/* Left side of navbar */}
                 <Grid item>
-                  <Typography variant='h6' className={classes.appBarTitle} >
-                    {title}
-                  </Typography>
-                </Grid>
-              </Grid>
-            </Grid>
-
-            <Grid item>
-              <Grid container justify='flex-end'>
-                <Grid item>
+                  <Grid container alignItems='center'>
                   {
-                    isLoading ? <Loading /> 
-                    : isAuthenticated ? null : <> <LoginButton /> <SignupButton /> </>
+                    isAuthenticated &&
+                    <Grid item>
+                      <IconButton edge='start' className={classes.menuButton} onClick={toggleDrawer}>
+                        <Menu />
+                      </IconButton>
+                    </Grid>
+                  }
+                  {
+                    !searchBar && 
+                    <Grid item>
+                      <Typography variant='h6' className={classes.appBarTitle} >
+                        {title}
+                      </Typography>
+                    </Grid>
                   }
                 </Grid>
-                {
-                  isAuthenticated &&
-                  <Grid item>
-                    <MoreVert />
-                  </Grid>
-                }
               </Grid>
+
+              {/* Right side of navbar */}
+              {
+                !searchBar && 
+                <Grid item>
+                  <Grid container justify='flex-end' alignItems='center'>
+                    <Grid item>
+                      {
+                        isLoading ? <Loading /> 
+                        : isAuthenticated ? null : <> <LoginButton /> <SignupButton /> </>
+                      }
+                    </Grid>
+                    {
+                      isAuthenticated &&
+                      <Grid item>
+                        <IconButton onClick={toggleSearchBar}>
+                          <Search />
+                        </IconButton>
+                      </Grid>
+                    }
+                    {
+                      isAuthenticated &&
+                      <Grid item>
+                        <MoreVert />
+                      </Grid>
+                    }
+                  </Grid>
+                </Grid>
+              }
+              {
+                searchBar &&
+                <SearchInput />
+              }
             </Grid>
-          </Grid>
-        </Toolbar>
-      </AppBar>
-      </HideOnScroll>
-      <div className={classes.offset} />
-    </Box>
-    <AppDrawer open={drawer} onCloseHandler={toggleDrawer} {...drawerData}/>
-    </>
+            </Toolbar>
+          </AppBar>
+        </HideOnScroll>
+        <div className={classes.offset} />
+      </Box>
+    </div>
   )
 }
-
-export default NavBar;

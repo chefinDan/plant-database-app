@@ -8,6 +8,9 @@ const useStyles = makeStyles(theme => ({
     color: theme.palette.grey[500],
     marginRight: theme.spacing(1),
   },
+  input:{
+    flex: 1
+  }
 }))
 
 const SearchIcon = (props) => {
@@ -17,8 +20,10 @@ const SearchIcon = (props) => {
   );
 }
 
-const SearchInput = (props) => {
-const {handleChange} = props;
+export default function SearchInput(props){
+  const classes = useStyles();
+  const {handleChange} = props;
+
   return (
     <Input
       autoFocus
@@ -28,9 +33,7 @@ const {handleChange} = props;
       fullWidth
       startAdornment={<SearchIcon />}
       onChange={(event) => handleChange(event.target.value)}
+      className={classes.input}
     />
   );
 };
-
-
-export default SearchInput;

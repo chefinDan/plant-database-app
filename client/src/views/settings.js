@@ -20,12 +20,18 @@ function ListItemLink(props) {
 
 export default function Settings(){
   const classes = useStyles();
-  const { user, isLoading } = useAuth0();
+  const { user, isLoading, logout } = useAuth0();
   const { url, path } = useRouteMatch();
 
   useEffect(() => {
     console.log(`url: ${url}, path: ${path}`)
   },[url, path]);
+
+  const handleLogout = () => {
+    logout({
+      returnTo: window.location.origin,
+    });
+  }
 
   if(isLoading){
     return (
@@ -36,7 +42,7 @@ export default function Settings(){
   return (
     <div className={classes.root}>
       <List component="nav">
-        <ListItem button>
+        <ListItem onClick={handleLogout} button>
           <ListItemIcon>
             <ExitToApp />
           </ListItemIcon>

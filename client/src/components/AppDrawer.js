@@ -32,12 +32,6 @@ const AppDrawer = ({open, onCloseHandler, items, icons, colors}) => {
   const classes = useStyles();
   const {isLoading, isAuthenticated, user, logout} = useAuth0();
 
-  const handleLogout = () => {
-    logout({
-      returnTo: window.location.origin,
-    });
-  }
-
   return(
     <Drawer 
       anchor='left' 
