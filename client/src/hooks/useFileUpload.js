@@ -1,39 +1,9 @@
 // Based on code from https://jsmanifest.com/uploading-files-in-react-while-keeping-ui-completely-in-sync/
 
 import { useCallback, useEffect, useReducer, useRef } from 'react'
-import AWS from 'aws-sdk';
-import { useS3 } from './useS3';
+import useS3 from './useS3';
 
 const bucketName = 'green-house-dev'; 
-
-const api = {
-  uploadFile({file}) {
-    console.log(file)
-    return new Promise(async (resolve, reject) => {
-      var params = {
-        Bucket: bucketName, 
-        Key: file.name, Body: await file.arrayBuffer()};
-      try{
-        AWS.config.credentials.get(err => {
-          if(err){
-            console.log('Error in getting credentials', err);
-            reject(err);
-          }
-          else{
-            const s3 = new AWS.S3();
-            s3.putObject(params, (err, data) => {
-              if(err) reject(err);
-              else resolve(data);
-            });
-          }
-        })
-      }      
-      catch(err){
-        reject(err);
-      }
-    })
-  },
-}
 
 const logUploadedFile = (num, color = 'green') => {
   const msg = `%cUploaded ${num} files.`
@@ -53,7 +23,7 @@ const initialState = {
   pending: [],
   next: null,
   uploading: false,
-  uploaded: {},
+  uploaded:[],
   status: 'idle',
 }
 
@@ -74,10 +44,10 @@ const reducer = (state, action) => {
         ...state,
         next: null,
         pending: action.pending,
-        uploaded: {
+        uploaded: [
           ...state.uploaded,
-          [action.prev.id]: action.prev.file,
-        },
+          action.prev.file,
+        ],
       }
     case 'files-uploaded':
       return { ...state, uploading: false, status: FILES_UPLOADED }
@@ -128,9 +98,8 @@ const useFileUpload = () => {
   // Processes the next pending thumbnail when ready
   useEffect(() => {
     if (state.pending.length && state.next) {
-      const { next, bucket } = state
+      const { next } = state
       const { file } = next;
-      // file.arrayBuffer().then((data) => console.log(data)) 
       upload(file.name, file.arrayBuffer())
         .then(() => {
           const prev = next

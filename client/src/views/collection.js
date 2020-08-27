@@ -1,14 +1,14 @@
-import React, { useEffect, useState, useLayoutEffect } from "react";
+import React, { useEffect, useState } from "react";
 import { useAuth0 } from "@auth0/auth0-react";
 import Loading from "../components/loading";
 import Scroller from "../components/Scroller";
-import { Typography, Container, Button } from "@material-ui/core";
+import { Button } from "@material-ui/core";
 import { useRouteMatch } from "react-router-dom";
 const testUrl = 'https://jsonplaceholder.typicode.com/photos';
 
 
 const Collection = () => {
-  const { user, isLoading } = useAuth0(true);
+  const { user, isLoading } = useAuth0();
   const [photos, setPhotos] = useState([]);
   const [page, setPage] = useState(0);
   const [loading, setLoading] = useState(false);

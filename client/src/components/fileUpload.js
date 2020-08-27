@@ -1,6 +1,6 @@
 import React from 'react'
 import useFileUpload from '../hooks/useFileUpload';
-import { makeStyles } from '@material-ui/core';
+import { makeStyles, Box, FormControl, Button, Typography, Input } from '@material-ui/core';
 
 const bucketName = 'green-house-dev';
 
@@ -17,52 +17,53 @@ const useStyles = makeStyles(theme => ({
         alignItems: 'center',
         padding: '6px 4px'
     }
-      
-
 }));
 
-const Input = (props) => (
-  <input
-    type="file"
-    accept="image/*"
-    name="img-loader-input"
-    multiple
-    {...props}
-  />
-)
+const MultiFileInput = (props) => {
+  const {children, onChange} = props;
+  return(
+    <Input 
+      type='file' 
+      onChange={onChange}
+      disableUnderline={true} 
+      inputProps={{accept: 'image/*', multiple:true}} 
+      color='secondary' 
+      style={{paddingBottom: '2rem'}}
+    >
+      {children}
+    </Input>
+  )
+}
 
 const FileUpload = () => {
   const {
     files,
-    pending,
-    next,
-    uploading,
     uploaded,
     status,
     onSubmit,
-    onChange,
+    onChange: fileInputChange,
   } = useFileUpload();
 
   const classes = useStyles();
 
   return (
-    <div className="container">
-      <form className="form" onSubmit={onSubmit}>
+    <Box >
+      <form onSubmit={onSubmit}>
         {status === 'FILES_UPLOADED' && (
-          <div className="success-container">
-            <div>
-              <h2>Congratulations!</h2>
+          <Box className="success-container">
+            <Box>
+              <Typography variant="h2">Congratulations!</Typography>
               <small>You uploaded your files. Get some rest.</small>
-            </div>
-          </div>
+            </Box>
+          </Box>
         )}
-        <div>
-          <Input onChange={onChange} />
-          <button type="submit">Submit</button>
-        </div>
-        <div>
+        <Box>
+          <MultiFileInput onChange={fileInputChange}/>
+          <Button type="submit">Submit</Button>
+        </Box>
+        <Box>
           {files.map(({ file, src, id }, index) => (
-            <div
+            <Box
               style={{
                 opacity: uploaded[id] ? 0.2 : 1,
               }}
@@ -70,12 +71,12 @@ const FileUpload = () => {
               className={classes.thumbnailWrapper}
             >
               <img className={classes.thumbnail} src={src} alt="" object-fit='cover'/>
-              <div className="thumbnail-caption">{file.name}</div>
-            </div>
+              <Box className="thumbnail-caption">{file.name}</Box>
+            </Box>
           ))}
-        </div>
+        </Box>
       </form>
-    </div>
+    </Box>
   )
 }
 

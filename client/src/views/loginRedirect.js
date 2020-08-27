@@ -10,7 +10,7 @@ import { useRouteMatch } from "react-router-dom";
 const LoginRedirect = () => {
 
   const [ idToken, setIdToken ] = useState();
-  const { isLoading, getIdTokenClaims } = useAuth0();
+  const { isLoading, user, getIdTokenClaims } = useAuth0();
   const { url, path } = useRouteMatch();
 
   useEffect(() => {
@@ -41,6 +41,8 @@ const LoginRedirect = () => {
     <Box >
         <Typography variant='h3'>Returned from login</Typography>
         <Highlight >{JSON.stringify(idToken, null, 2)}</Highlight>
+        <Highlight >{JSON.stringify(user, null, 2)}</Highlight>
+
     </Box>
   );  
 };

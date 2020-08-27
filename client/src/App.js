@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { Route, Switch } from 'react-router-dom';
 import { Typography, CssBaseline } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
@@ -10,6 +10,7 @@ import PrivateRoute from './components/private-route';
 import Collection from './views/collection';
 import SearchResults from './views/searchResults';
 import FloatingActionButton from './components/Fab';
+import Settings from './views/settings';
 
 const useStyles = makeStyles(theme => ({
   root: {
@@ -23,12 +24,11 @@ const useStyles = makeStyles(theme => ({
 
 function App() {
   const classes = useStyles();
-  const [title, setTitle] = useState('');
   
   return (
     <div className={classes.root}>
       <CssBaseline />
-      <NavBar title={title} /> 
+      <NavBar /> 
         <Switch>
           <PrivateRoute
             path='/redirect' exact
@@ -45,6 +45,10 @@ function App() {
           <PrivateRoute
             path='/search' exact
             component={SearchResults}
+          />
+          <PrivateRoute
+            path='/settings' exact
+            component={Settings}
           />
           <Route 
             path='/'

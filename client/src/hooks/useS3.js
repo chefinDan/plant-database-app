@@ -1,27 +1,28 @@
 import AWS from 'aws-sdk';
 import { useAuth0 } from '@auth0/auth0-react';
 import { useState, useEffect } from 'react';
+
 const bucketName = 'green-house-dev';
 
 const useS3 = () => {
-  const { isLoading, getIdTokenClaims } = useAuth0();
-  const [state, setState] = useState(initialState);
+  const { isLoading, user, isAuthenticated, getIdTokenClaims } = useAuth0();
 
   useEffect(() => {
     (async () => {
-      var logins = {};
-      const provider_url = process.env.REACT_APP_AUTH0_DOMAIN;
-      AWS.config.region = process.env.REACT_APP_REGION;
-
-      const id_token = await getIdTokenClaims();
-      logins[provider_url] = id_token.__raw;
-      AWS.config.credentials = new AWS.CognitoIdentityCredentials({
-        IdentityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
-        Logins: logins
-      });
-      setState(state => ({...state, idToken: id_token.__raw}));
+      if(!isLoading && isAuthenticated){
+        var logins = {};
+        const provider_url = process.env.REACT_APP_AUTH0_DOMAIN;
+        AWS.config.region = process.env.REACT_APP_REGION;
+  
+        const id_token = await getIdTokenClaims();
+        logins[provider_url] = id_token.__raw;
+        AWS.config.credentials = new AWS.CognitoIdentityCredentials({
+          IdentityPoolId: process.env.REACT_APP_IDENTITY_POOL_ID,
+          Logins: logins
+        });
+      }
     })();
-  },[]);
+  },[isLoading]);
 
   const upload = async (key, dataPromise, meta) => {
     // blob type data returns a promise when a convert method is called on it,
@@ -30,7 +31,7 @@ const useS3 = () => {
     return new Promise(async (resolve, reject) => {
       const params = {
         Bucket: bucketName, 
-        Key: key, Body: data
+        Key: `${user.sub}/${key}`, Body: data
       };
       try{
         AWS.config.credentials.get(err => {
@@ -46,8 +47,9 @@ const useS3 = () => {
             });
           }
         })
-      }      
+      }
       catch(err){
+        console.log(err);
         reject(err);
       }
     })

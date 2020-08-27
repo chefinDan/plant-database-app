@@ -5,7 +5,6 @@ import {
   GridListTile, 
   GridListTileBar, 
   IconButton,
-  Button 
 } from '@material-ui/core';
 import InfoIcon from '@material-ui/icons/Info';
 import { makeStyles } from '@material-ui/core/styles';

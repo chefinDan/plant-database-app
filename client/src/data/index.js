@@ -1,5 +1,5 @@
 import React from 'react';
-import { Collections, Settings, Home } from '@material-ui/icons';
+import { Collections, Settings, Home, ExitToApp } from '@material-ui/icons';
 import { useTheme } from '@material-ui/core';
 
 export default {
@@ -13,12 +13,12 @@ export default {
             icons:{
                 'Home': Home,
                 'Collection': Collections,
-                'Settings': Settings
+                'Settings': Settings,
             },
             colors:{
                 'Home': 'red',
                 'Collection': 'blue',
-                'Settings': 'grey'
+                'Settings': 'grey',
             }
         }
     }

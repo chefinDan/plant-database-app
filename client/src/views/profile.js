@@ -49,7 +49,6 @@ const Profile = () => {
         <Button onClick={logIdToken}>
           Id Token
         </Button>
-        <FileUpload />
       </Grid>
     </Grid>
   );  
